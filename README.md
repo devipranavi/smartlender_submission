@@ -1,7 +1,7 @@
 # Smart Lender — ML-Powered Loan Approval Prediction
 
 ## 🎥 Demo Video
-[Click here to watch the demo](PASTE_YOUR_VIDEO_LINK_HERE)
+[Click here to watch the demo](https://youtu.be/PccsfngDyOE)
 
 ## 📌 Project Description
 Smart Lender is a machine learning web application that predicts 
