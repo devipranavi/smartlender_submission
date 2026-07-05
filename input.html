@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loan Application — Smart Lender</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+  .stage { min-height: 100vh; padding: 56px 24px 80px; display: flex; justify-content: center; }
+  .sheet {
+    width: 100%;
+    max-width: 620px;
+    background: #FFFDF8;
+    border: 1px solid var(--paper-line);
+    border-radius: 4px;
+    box-shadow: 0 18px 40px rgba(27,36,48,0.08);
+  }
+
+  .sheet-head {
+    padding: 32px 40px 24px;
+    border-bottom: 1px dashed var(--paper-line);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+  }
+  .sheet-head h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 28px;
+    margin: 6px 0 0;
+  }
+  .ref-num { font-family: var(--mono); font-size: 12px; color: var(--brass-dark); text-align: right; }
+
+  /* progress meter — fills as fields are completed */
+  .meter-track {
+    height: 3px;
+    background: var(--paper-line);
+    margin: 0;
+  }
+  .meter-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--brass);
+    transition: width 0.35s ease;
+  }
+
+  form { padding: 12px 40px 36px; }
+
+  .row {
+    display: grid;
+    grid-template-columns: 168px 1fr;
+    align-items: center;
+    gap: 18px;
+    padding: 16px 0;
+    border-bottom: 1px dotted var(--paper-line);
+  }
+  .row label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  input, select {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid transparent;
+    background: transparent;
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--ink);
+    padding: 6px 2px;
+    appearance: none;
+  }
+  select { cursor: pointer; }
+
+  /* leader-dots underline that lights up gold on focus, like a ledger entry being inked */
+  .field {
+    position: relative;
+  }
+  .field::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 2px;
+    background: var(--brass);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+  }
+  .field:focus-within::after { transform: scaleX(1); }
+  .field:focus-within { background: rgba(184,146,74,0.05); }
+
+  select:focus, input:focus { outline: none; }
+
+  .submit-row {
+    padding-top: 28px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 14px;
+  }
+  .hint { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="sheet">
+      <div class="sheet-head">
+        <div>
+          <div class="eyebrow">Loan Application</div>
+          <h1>Applicant Details</h1>
+        </div>
+        <div class="ref-num" id="refNum">REF —</div>
+      </div>
+      <div class="meter-track"><div class="meter-fill" id="meterFill"></div></div>
+
+      <form action="{{ url_for('submit') }}" method="post" id="loanForm">
+
+        <div class="row">
+          <label for="Gender">Gender</label>
+          <div class="field"><select id="Gender" name="Gender" required>
+            <option value="" disabled selected hidden></option>
+            <option value="0">Male</option>
+            <option value="1">Female</option>
+          </select></div>
+        </div>
+
+        <div class="row">
+          <label for="Married">Married</label>
+          <div class="field"><select id="Married" name="Married" required>
+            <option value="" disabled selected hidden></option>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+          </select></div>
+        </div>
+
+        <div class="row">
+          <label for="Dependents">Dependents</label>
+          <div class="field"><input type="number" id="Dependents" name="Dependents" min="0" max="3" placeholder="0–3" required></div>
+        </div>
+
+        <div class="row">
+          <label for="Education">Education</label>
+          <div class="field"><select id="Education" name="Education" required>
+            <option value="" disabled selected hidden></option>
+            <option value="1">Graduate</option>
+            <option value="0">Not Graduate</option>
+          </select></div>
+        </div>
+
+        <div class="row">
+          <label for="Self_Employed">Self Employed</label>
+          <div class="field"><select id="Self_Employed" name="Self_Employed" required>
+            <option value="" disabled selected hidden></option>
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select></div>
+        </div>
+
+        <div class="row">
+          <label for="ApplicantIncome">Applicant Income</label>
+          <div class="field"><input type="number" id="ApplicantIncome" name="ApplicantIncome" placeholder="Monthly income" required></div>
+        </div>
+
+        <div class="row">
+          <label for="CoapplicantIncome">Co-applicant Income</label>
+          <div class="field"><input type="number" id="CoapplicantIncome" name="CoapplicantIncome" placeholder="0 if none" required></div>
+        </div>
+
+        <div class="row">
+          <label for="LoanAmount">Loan Amount</label>
+          <div class="field"><input type="number" id="LoanAmount" name="LoanAmount" placeholder="In thousands" required></div>
+        </div>
+
+        <div class="row">
+          <label for="Loan_Amount_Term">Loan Term</label>
+          <div class="field"><input type="number" id="Loan_Amount_Term" name="Loan_Amount_Term" placeholder="In days, e.g. 360" required></div>
+        </div>
+
+        <div class="row">
+          <label for="Credit_History">Credit History</label>
+          <div class="field"><select id="Credit_History" name="Credit_History" required>
+            <option value="" disabled selected hidden></option>
+            <option value="1">Good</option>
+            <option value="0">Poor</option>
+          </select></div>
+        </div>
+
+        <div class="row">
+          <label for="Property_Area">Property Area</label>
+          <div class="field"><select id="Property_Area" name="Property_Area" required>
+            <option value="" disabled selected hidden></option>
+            <option value="2">Urban</option>
+            <option value="1">Semiurban</option>
+            <option value="0">Rural</option>
+          </select></div>
+        </div>
+
+        <div class="submit-row">
+          <span class="hint" id="hintText">0 of 11 fields complete</span>
+          <button type="submit" class="btn btn-brass">Submit Application</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Reference number, generated for atmosphere
+    document.getElementById('refNum').textContent =
+      'REF ' + Math.random().toString(36).slice(2, 8).toUpperCase();
+
+    // Live progress meter as the ledger fills in
+    const form = document.getElementById('loanForm');
+    const fields = form.querySelectorAll('input, select');
+    const fill = document.getElementById('meterFill');
+    const hint = document.getElementById('hintText');
+
+    function updateProgress() {
+      const total = fields.length;
+      const filled = Array.from(fields).filter(f => f.value !== '').length;
+      fill.style.width = (filled / total * 100) + '%';
+      hint.textContent = filled + ' of ' + total + ' fields complete';
+    }
+    fields.forEach(f => f.addEventListener('input', updateProgress));
+    fields.forEach(f => f.addEventListener('change', updateProgress));
+    updateProgress();
+  </script>
+</body>
+</html>
